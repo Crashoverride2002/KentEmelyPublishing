@@ -248,7 +248,7 @@ class plgVmPaymentPaypal_checkout extends vmPSPlugin {
 		}
 
 		$this->_currentMethod = $method;
-		$vmPPOrderId = $this->getvmPPOrderId();
+		$vmPPOrderId = self::getvmPPOrderId();
 		if( ($method->paypal_products == 'buttons' or $method->paypal_products == 'hosted-fields') and $method->button_show != '2' and !empty($vmPPOrderId)){
 			$pluginName .=  ' '.vmText::sprintf('VMPAYMENT_PAYPAL_PPC_LOGGED_IN','COM_VIRTUEMART_ORDER_CONFIRM_MNU',$method->payment_name);
 		}
@@ -259,7 +259,7 @@ class plgVmPaymentPaypal_checkout extends vmPSPlugin {
 	static $vmPPOrderId = '';
 	static $vmPPOrderIdHash = '';
 
-	function getCartHash(){
+	static function getCartHash(){
 		$cart = VirtueMartCart::getCart();
 
 		/*if(!isset($cart->cartPrices['salesPriceShipment'])){
@@ -274,7 +274,7 @@ class plgVmPaymentPaypal_checkout extends vmPSPlugin {
 		return $h;
 	}
 
-	function setvmPPOrderId($vmPPOrderId = ''){
+	static function setvmPPOrderId($vmPPOrderId = ''){
 		if($vmPPOrderId == ''){
 			$vmPPOrderId = self::$vmPPOrderId;
 		} else {
@@ -283,17 +283,17 @@ class plgVmPaymentPaypal_checkout extends vmPSPlugin {
 		$sess = JFactory::getSession();
 		$sess->set('vmPPOrderId', $vmPPOrderId,'vm');
 
-		self::$vmPPOrderIdHash = $this->getCartHash();
+		self::$vmPPOrderIdHash = self::getCartHash();
 		$sess->set('vmPPOrderIdHash', self::$vmPPOrderIdHash,'vm');
 	}
 
-	function getvmPPOrderId(){
+	static function getvmPPOrderId(){
 		$sess = JFactory::getSession();
 		self::$vmPPOrderId = $sess->get('vmPPOrderId',self::$vmPPOrderId,'vm');
 
 		if(empty(self::$vmPPOrderId)) return '';
 
-		$hash = $this->getCartHash();
+		$hash = self::getCartHash();
 
 		self::$vmPPOrderIdHash = $sess->get('vmPPOrderIdHash',self::$vmPPOrderIdHash,'vm');
 		if($hash == self::$vmPPOrderIdHash){
@@ -723,6 +723,11 @@ class plgVmPaymentPaypal_checkout extends vmPSPlugin {
 
 	function renderButtonsHtml ($pageType) {
 
+		$app = JFactory::getApplication();
+		//$app->setHeader('Cross-Origin-Opener-Policy','unsafe-none');
+		$app->setHeader('Cross-Origin-Opener-Policy','same-origin-allow-popups');
+		$app->setHeader('Access-Control-Allow-Origin','*.paypal.com');
+		
 		$html = '';
 		//$renderBtProds = array('buttons','sofort');
 		if($this->_currentMethod->paypal_products == 'buttons'){
@@ -1074,7 +1079,7 @@ class plgVmPaymentPaypal_checkout extends vmPSPlugin {
 
 		//vmJsApi::addJScript('/plugins/vmpayment/paypal_checkout/assets/js/onready.js',false, true, true);
 
-		if( (isset($products['buttons']) and empty($vmPPOrderId)) or isset($products['hosted-fields']) or isset($products['pui'])){
+		if( isset($products['buttons']) or isset($products['hosted-fields']) or isset($products['pui'])){
 
 
 			//$withLegal = $this->_currentMethod->components == 'pui'? 'true':'false';
@@ -1111,9 +1116,11 @@ class plgVmPaymentPaypal_checkout extends vmPSPlugin {
 	vmPP.vmPPOrderId = "'.$vmPPOrderId.'";
 	vmPP.withLogin = "'.$withLogin.'";
 	vmPP.withButton = "'.$withButton.'";
-	vmPP.BtConfirmTxt = "'.vmText::_('COM_VIRTUEMART_ORDER_CONFIRM_MNU').'";
-			
-	jQuery(document).ready(function() {
+	vmPP.BtConfirmTxt = "'.vmText::_('COM_VIRTUEMART_ORDER_CONFIRM_MNU').'";';
+
+			if(empty($vmPPOrderId)){
+
+				$j .= '	jQuery(document).ready(function() {
 			killmeReady = setInterval(function(){
                     
                     if(typeof Virtuemart !== "undefined" && typeof Virtuemart.onReadyPP !== "undefined"){
@@ -1132,6 +1139,10 @@ class plgVmPaymentPaypal_checkout extends vmPSPlugin {
             },5000);
 	});
 ';
+			}
+
+			
+
 			vmJsApi::addJScript('ppButtonRender',$j, true);
 		}
 
@@ -1566,7 +1577,27 @@ class plgVmPaymentPaypal_checkout extends vmPSPlugin {
 			}
 		}
 
-		$SQLfields = $this->getTableSQLFields(); vmdebug('my $SQLfields',$SQLfields);
+		$fieldsToCheck = array('first_name'=>'first_name','last_name'=>'last_name','city'=>'city','zip'=>'zip','virtuemart_country_id'=>'virtuemart_country_id');
+		$fieldsToCheckSQL = implode('" OR `name` = "',$fieldsToCheck);
+
+		//Lets check if the required userfields are published
+		$q = 'SELECT * FROM #__virtuemart_userfields WHERE (`name` = "'.$fieldsToCheckSQL.'") and published= 1';
+
+		$db = JFactory::getDbo();
+		$db->setQuery($q);
+		$res = $db->loadObjectList();
+		//vmdebug('my $fieldsToCheck',$fieldsToCheck,$q);
+		foreach($res as $m){
+			unset($fieldsToCheck[$m->name]);
+			//vmdebug('foreach($res as $m)',$m);
+		}
+		foreach($fieldsToCheck as $m){
+			//$mes = vmText::sprintf();
+			VmInfo('VMPAYMENT_PAYPAL_NEED_USERFIELD',$m);
+		}
+
+
+		$SQLfields = $this->getTableSQLFields(); //vmdebug('my $SQLfields',$SQLfields);
 		if(empty($SQLfields)) return false;
 
 		$loggablefields = $this->getTableSQLLoggablefields();
@@ -1577,7 +1608,7 @@ class plgVmPaymentPaypal_checkout extends vmPSPlugin {
 			$keys['virtuemart_order_id'] = 'KEY (`virtuemart_order_id`)';
 		}
 		$update[$this->_tablename] = array($tablesFields, $keys, array());
-		vmdebug('my update',$update);
+		//vmdebug('my update',$update);
 		$updater = new GenericTableUpdater();
 		return $updater->updateMyVmTables($update);
 	}

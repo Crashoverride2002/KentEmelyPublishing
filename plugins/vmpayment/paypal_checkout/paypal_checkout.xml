@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <extension version="3.5" type="plugin" group="vmpayment" method="upgrade">
     <name>PayPal Checkout</name>
-    <creationDate>August 20 2024</creationDate>
+    <creationDate>12. November 2024</creationDate>
     <author>VirtueMart Development Team</author>
     <authorUrl>https://virtuemart.net</authorUrl>
     <copyright>Copyright (C) 2004 - 2024 Virtuemart Team. All rights reserved.</copyright>
     <license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
-    <version>4.2.18</version>
-    <description>PayPal</description>
+    <version>4.4.1</version>
+    <description>PayPal Checkout for VirtueMart installed</description>
     <files>
         <filename plugin="paypal_checkout">paypal_checkout.php</filename>
         <folder>fields</folder>
@@ -35,18 +35,18 @@
                        description="VMPAYMENT_PAYPAL_MERCHANT_DESC" readonly="true" autocomplete="off"/>
                 <field class="live required" type="text" name="paypal_merchant_id" size="80"
                        label="VMPAYMENT_PAYPAL_MERCHANT_ID" default=""
-                       description="VMPAYMENT_PAYPAL_MERCHANT_ID_DESC" readonly="true" autocomplete="off"/>
+                       description="VMPAYMENT_PAYPAL_MERCHANT_ID_DESC" readonly="false" autocomplete="off"/>
                 <field class="sandbox required" type="text" name="sandbox_paypal_merchant_id" size="80"
                        label="VMPAYMENT_PAYPAL_SANDBOX_MERCHANT_ID" default=""
-                       description="VMPAYMENT_PAYPAL_MERCHANT_ID_DESC" readonly="true" autocomplete="off"/>
+                       description="VMPAYMENT_PAYPAL_MERCHANT_ID_DESC" readonly="false" autocomplete="off"/>
                 <field class="live required" name="client_id" type="text" size="80" default=""
-                       label="VMPAYMENT_PAYPAL_CLIENT_ID" readonly="true" autocomplete="off" />
+                       label="VMPAYMENT_PAYPAL_CLIENT_ID" readonly="false" autocomplete="off" />
                 <field class="live required" name="client_secret" type="password" size="80" default=""
-                       label="VMPAYMENT_PAYPAL_CLIENT_SECRET" readonly="true" autocomplete="off"/>
+                       label="VMPAYMENT_PAYPAL_CLIENT_SECRET" readonly="false" autocomplete="off"/>
                 <field class="sandbox required" name="sandbox_client_id" type="text" size="80" default=""
-                       label="VMPAYMENT_PAYPAL_SANDBOX_CLIENT_ID" readonly="true" autocomplete="off"/>
+                       label="VMPAYMENT_PAYPAL_SANDBOX_CLIENT_ID" readonly="false" autocomplete="off"/>
                 <field class="sandbox required" name="sandbox_client_secret" type="password" size="80" default=""
-                       label="VMPAYMENT_PAYPAL_SANDBOX_CLIENT_SECRET" readonly="true" autocomplete="off"/>
+                       label="VMPAYMENT_PAYPAL_SANDBOX_CLIENT_SECRET" readonly="false" autocomplete="off"/>
 
                 <field class="" name="paypal_products" type="list" default="buttons"
                        label="VMPAYMENT_PAYPAL_COMPONENTS" autocomplete="off">

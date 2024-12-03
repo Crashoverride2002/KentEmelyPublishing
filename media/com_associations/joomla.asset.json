@@ -26,19 +26,6 @@
       "version": "72d110"
     },
     {
-      "name": "com_associations.associations-edit",
-      "type": "script",
-      "uri": "com_associations/associations-edit.min.js",
-      "dependencies": [
-        "core"
-      ],
-      "attributes": {
-        "type": "module",
-        "defer": true
-      },
-      "version": "00d001"
-    },
-    {
       "name": "com_associations.admin-associations-modal",
       "type": "script",
       "uri": "com_associations/admin-associations-modal.min.js",
@@ -57,6 +44,19 @@
       "version": "579941"
     },
     {
+      "name": "com_associations.associations-edit",
+      "type": "script",
+      "uri": "com_associations/associations-edit.min.js",
+      "dependencies": [
+        "core"
+      ],
+      "attributes": {
+        "type": "module",
+        "defer": true
+      },
+      "version": "00d001"
+    },
+    {
       "name": "com_associations.sidebyside",
       "type": "script",
       "uri": "com_associations/sidebyside.min.js",
@@ -66,7 +66,7 @@
       "attributes": {
         "type": "module"
       },
-      "version": "dafb01"
+      "version": "d3a446"
     }
   ]
 }
