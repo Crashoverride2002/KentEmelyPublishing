@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="uft-8"?>
+<extension version="3.9" type="component" method="upgrade">
+    <name>com_taxcalculation</name>
+    <creationDate>04-12.2024</creationDate>
+    <author>Kent Hansen.</author>
+    <authorEmail>HansenKentc@gmail.com</authorEmail>
+    <authorUrl>www.KentEmelyPublishing.com</authorUrl>
+    <version>1.0.0</version>
+    <description>A simple tax calculation for Danish tax system</description>
+    <administration>
+	<menu>Tax</menu>
+	<files folder="administrator">/administrator/tax.php</files>
+    </administration>
+    <file>
+	<filename>tax.php</filename>
+	<folder>administrator</folder)
+    </files>
+</extension>
